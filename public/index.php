@@ -15,16 +15,15 @@ session_start();
 
 // Instantiate the app
 $settings = require __DIR__ . '/../src/settings.php';
-$app = new \Slim\App($settings);
-
+$app = Garbanzo\App::create($settings);
 // Set up dependencies
 require __DIR__ . '/../src/dependencies.php';
-
+$app->addDepencies($container);
 // Register middleware
 require __DIR__ . '/../src/middleware.php';
+$app->addDepencies(null);
 
 // Register routes
-require __DIR__ . '/../src/routes.php';
-
+$app->addRoutes(require __DIR__ . '/../src/routes.php');
 // Run app
 $app->run();
