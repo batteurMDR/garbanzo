@@ -15,13 +15,11 @@ session_start();
 
 // Instantiate the app
 $settings = require __DIR__ . '/../src/settings.php';
-$app = Garbanzo\App::create($settings);
+$app = \Garbanzo\App::create($settings);
 // Set up dependencies
-require __DIR__ . '/../src/dependencies.php';
-$app->addDepencies($container);
+$app->addDepencies(require __DIR__ . '/../src/dependencies.php');
 // Register middleware
-require __DIR__ . '/../src/middleware.php';
-$app->addDepencies(null);
+$app->addMiddleware(require __DIR__ . '/../src/middleware.php');
 
 // Register routes
 $app->addRoutes(require __DIR__ . '/../src/routes.php');

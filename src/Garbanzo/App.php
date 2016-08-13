@@ -2,35 +2,56 @@
 namespace Garbanzo;
 
 use Slim\App as BaseApp;
+use \Slim\Container;
 
-class App extends BaseApp {
+class App {
 
-    private $app;
+    private static $app;
 
-    public static function create($settings = array()) {
-        if ($this->app == null) {
-            $this->app = new static($settings);
-        }
-        return $this->app;
+    private $settings;
+    private $routes;
+    private $depencies;
+    private $middleware;
+
+    public function __construct($settings = array()) {
+        $this->settings = $settings;
     }
 
-    public function run() {
-        throw new Exception('NotImplemented');
+    public static function create($settings = array()) {
+        if (self::$app == null) {
+            self::$app = new static($settings);
+        }
+        return self::$app;
     }
 
     public function addRoutes($routes) {
-        throw new Exception('NotImplemented');
+        $this->routes = $routes;
 
     }
 
     public function addDepencies($dependencies) {
-        throw new Exception('NotImplemented');
-
+        $this->dependencies = $dependencies;
     }
 
     public function addMiddleware($middleware) {
-        throw new Exception('NotImplemented');
+        $this->middleware = $middleware;
+    }
 
+    public function run() {
+        $container= new Container($this->settings);
+
+
+        foreach ($this->dependencies as $dependencyName => $dependencyValue) {
+            $container[$dependencyName] = $dependencyValue;
+        }
+
+        $app = new BaseApp($container);
+
+        foreach ($this->routes as $route) {
+            $app->{$route[0]}($route[1], $route[2]);
+        }
+
+        $app->run();
     }
 
 }
